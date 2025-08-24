@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect QuickBooks Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="card hero" aria-label="Connect to QuickBooks">
+      <div class="hero-content">
+        <h1 class="title">Connect to QuickBooks</h1>
+        <p class="subtitle">Seamlessly manage your sales tax once connected.</p>
+        <button id="connectBtn" class="btn btn-primary" type="button" aria-controls="tabs">
+          Connect to Quickbooks
+        </button>
+      </div>
+    </section>
+
+    <section id="tabs" class="card tabs is-hidden" aria-label="Sales Tax Actions">
+      <div role="tablist" aria-label="Sales Tax tabs" class="tablist">
+        <button role="tab" aria-selected="false" aria-controls="panel-sales-tax" id="tab-sales-tax" class="tab-btn" tabindex="-1">Calculate Sales Tax</button>
+        <!-- <button role="tab" aria-selected="false" aria-controls="panel-update" id="tab-update" class="tab-btn" tabindex="-1">Update Project</button>
+        <button role="tab" aria-selected="false" aria-controls="panel-get" id="tab-get" class="tab-btn" tabindex="-1">Get Project</button>
+        <button role="tab" aria-selected="false" aria-controls="panel-get-filter" id="tab-get-filter" class="tab-btn" tabindex="-1">Get Projects By Filter</button> -->
+      </div>
+
+      <div id="panel-sales-tax" role="tabpanel" aria-labelledby="tab-sales-tax" class="tab-panel" hidden>
+        <div hidden class="form-row use-for">
+          <label><input type="checkbox" name="forFromShipping" id="for-from-shipping"> Use For From SHIPPING Address</label>
+        </div>
+        <div hidden class="form-row use-for">
+          <label><input type="checkbox" name="forToShipping" id="for-to-shipping"> Use For To SHIPPING Address</label>
+        </div>
+        <div id="customers"></div>
+        <form id="form-sales-tax" class="form" novalidate>
+          <div class="form-row">
+            <label for="sales-tax-customer">Customer ID</label>
+            <input id="sales-tax-customer" name="customer" type="text" placeholder="Enter customer" />
+          </div>
+          <div class="form-row">
+            <label for="sales-tax-transactionDate">Transaction Date</label>
+            <input id="sales-tax-transactionDate" name="transactionDate" type="date" />
+          </div>
+          <div class="form-row">
+            <label><input type="checkbox" name=shippingFromCheckBox" id="sales-tax-shippingFromChkBx"> SHIPPING FROM ADDRESS:</label>
+          </div>
+          <div class="form-row ship-from">
+            <label for="sales-tax-streetAddressLine1-from">Address Line 1</label>
+            <input id="sales-tax-streetAddressLine1-from" name="streetAddressLine1-from" type="text" placeholder="Enter Address  (e.g., street, PO Box, or company name)" />
+          </div>
+          <div class="form-row ship-from">
+            <label for="sales-tax-streetAddressLine2-from">Address Line 2</label>
+            <input id="sales-tax-streetAddressLine2-from" name="streetAddressLine2-from" type="text" placeholder="Enter Address  (e.g., apartment, suite, unit, or building)." />
+          </div>
+          <div class="form-row ship-from">
+            <label for="sales-tax-streetAddressLine3-from">Address Line 3</label>
+            <input id="sales-tax-streetAddressLine3-from" name="streetAddressLine3-from" type="text" placeholder="Enter Address  (Spillover space for line 2.)" />
+          </div>
+          <div class="form-row ship-from">
+            <label for="sales-tax-postalCode-from">Postal Code</label>
+            <input id="sales-tax-postalCode-from" name="postalCode-from" type="text" placeholder="Enter Postal Code (ZIP or postal code.)" />
+          </div>
+          <div class="form-row ship-from">
+            <label for="sales-tax-city-from">City</label>
+            <input id="sales-tax-city-from" name="city-from" type="text" placeholder="Enter City (City, district, suburb, town, or village.)" />
+          </div>
+          <div class="form-row ship-from">
+            <label for="sales-tax-state-from">State</label>
+            <input id="sales-tax-state-from" name="state-from" type="text" placeholder="Enter State (State, province, or region abbreviation Two–Letter State and Possession Abbreviations.)" />
+          </div>
+          <div class="form-row ship-from">
+            <label for="sales-tax-countryCode-from">Country Code</label>
+            <input id="sales-tax-countryCode-from" name="countryCode" type="text" placeholder="Enter Country Code (Three-letter country code ISO 3166 Country Codes.)" />
+          </div>
+          <div class="form-row">
+            <label><input type="checkbox" name="shippingToCheckBox" id="sales-tax-shippingToChkBx"> SHIPPING TO ADDRESS:</label>
+          </div>
+          <div class="form-row ship-to">
+            <label for="sales-tax-streetAddressLine1-to">Address Line 1</label>
+            <input id="sales-tax-streetAddressLine1-to" name="streetAddressLine1-to" type="text" placeholder="Enter Address  (e.g., street, PO Box, or company name)" />
+          </div>
+          <div class="form-row ship-to">
+            <label for="sales-tax-streetAddressLine2-to">Address Line 2</label>
+            <input id="sales-tax-streetAddressLine2-to" name="streetAddressLine2-to" type="text" placeholder="Enter Address  (e.g., apartment, suite, unit, or building)." />
+          </div>
+          <div class="form-row ship-to">
+            <label for="sales-tax-streetAddressLine3-to">Address Line 3</label>
+            <input id="sales-tax-streetAddressLine3-to" name="streetAddressLine3-to" type="text" placeholder="Enter Address  (Spillover space for line 2.)" />
+          </div>
+          <div class="form-row ship-to">
+            <label for="sales-tax-postalCode-to">Postal Code</label>
+            <input id="sales-tax-postalCode-to" name="postalCode-to" type="text" placeholder="Enter Postal Code (ZIP or postal code.)" />
+          </div>
+          <div class="form-row ship-to">
+            <label for="sales-tax-city-to">City</label>
+            <input id="sales-tax-city-to" name="city-to" type="text" placeholder="Enter City (City, district, suburb, town, or village.)" />
+          </div>
+          <div class="form-row ship-to">
+            <label for="sales-tax-state-to">State</label>
+            <input id="sales-tax-state-to" name="state-to" type="text" placeholder="Enter State (State, province, or region abbreviation Two–Letter State and Possession Abbreviations.)" />
+          </div>
+          <div class="form-row ship-to">
+            <label for="sales-tax-countryCode-to">Country Code</label>
+            <input id="sales-tax-countryCode-to" name="countryCode-to" type="text" placeholder="Enter Country Code (Three-letter country code ISO 3166 Country Codes.)" />
+          </div>
+          <div class="form-row ship-fee">
+            <label for="sales-tax-shipping-fee">Shipping Fee</label>
+            <input id="sales-tax-shipping-fee" name="shipping-fee" type="number" placeholder="Enter Shipping Fee" />
+          </div>
+          <div class="form-row ship-fee">
+            <label for="sales-tax-shipping-fee-currency">Shipping Fee Currency Code</label>
+            <input id="sales-tax-shipping-fee-currency" name="shipping-fee-currency" type="text" placeholder="Enter Currency Code" />
+          </div>
+          <div class="form-row">
+            <label for="sales-tax-numberOfLines">Number of Units</label>
+            <input id="sales-tax-numberOfLines" name="numberOfLines" type="number" placeholder="Enter Number of Lines" />
+          </div>
+          <div class="form-row">
+            <label for="sales-tax-pricePerUnitExcludingTaxes">Price Per Unit Excluding Taxes </label>
+            <input id="sales-tax-pricePerUnitExcludingTaxes" name="pricePerUnitExcludingTaxes" type="number" placeholder="Enter Price Per Unit" />
+          </div>
+          <div class="form-row ">
+            <label for="sales-tax-pricePerUnitExcludingTaxes-currency">Price Per Unit Currency Code</label>
+            <input id="sales-tax-pricePerUnitExcludingTaxes-currency" name="pricePerUnitExcludingTaxes-currency" type="text" placeholder="Enter Currency Code" />
+          </div>
+          <div class="form-row">
+            <label for="sales-tax-totalPriceExcludingTaxes">Total Price Excluding Taxes</label>
+            <input id="sales-tax-totalPriceExcludingTaxes" name="totalPriceExcludingTaxes" type="number" placeholder="Enter Total Price" />
+          </div>
+          <div class="form-row">
+            <label for="sales-tax-totalPriceExcludingTaxes-currency">Total Price Currency Code</label>
+            <input id="sales-tax-totalPriceExcludingTaxes-currency" name="totalPriceExcludingTaxes-currency" type="text" placeholder="Enter Currency Code" />
+          </div>
+          <div class="form-row">
+            <label for="sales-tax-proudctVariant">Product Variant ID</label>
+            <input id="sales-tax-productVariant" name="ProductVariant" type="text" placeholder="Enter Product Variant ID" />
+          </div>
+          <div class="form-actions">
+            <button id="calculate-tax-btn" class="btn btn-primary" type="button">Calculate Tax</button>
+          </div>
+        </form>
+      </div>
+    </section>
+    <div>
+        <label id="display"></label>
+        <div id="table"></div>
+    </div>
+  </main>
+
+  <script>
+    (async function () {
+      const connectButton = document.getElementById('connectBtn');
+      const tabsSection = document.getElementById('tabs');
+      const heroSection = document.querySelector('.hero');
+      const tabButtons = Array.from(document.querySelectorAll('.tab-btn'));
+      const tabPanels = Array.from(document.querySelectorAll('.tab-panel'));
+
+      const shippingFromCheckBox = document.getElementById('sales-tax-shippingFromChkBx');
+      const shippingToCheckBox = document.getElementById('sales-tax-shippingToChkBx');
+      const allShipFrom = document.querySelectorAll('.ship-from');
+      const allShipTo = document.querySelectorAll('.ship-to');
+
+      let allCustomers = [];
+
+      const calculateTaxButton = document.getElementById('calculate-tax-btn');
+
+      allShipFrom.forEach((element) => {
+        element.setAttribute('hidden', '');
+      });
+
+      allShipTo.forEach((element) => {
+        element.setAttribute('hidden', '');
+      });
+
+      shippingFromCheckBox.addEventListener('change', () => {
+        allShipFrom.forEach((element) => {
+          if(shippingFromCheckBox.checked) {
+            element.removeAttribute('hidden')
+          } else {
+            element.setAttribute('hidden', '')
+          }
+        });
+      });
+      
+      shippingToCheckBox.addEventListener('change', () => {
+        allShipTo.forEach((element) => {
+          if(shippingToCheckBox.checked) {
+            element.removeAttribute('hidden')
+          } else {
+            element.setAttribute('hidden', '')
+          }
+        });
+      });
+
+      let isAuth = false;
+
+      await checkToken();
+      if(isAuth) {
+          showTabs();
+          await displayCustomers();
+      }
+
+      function activateTab(index) {
+        tabButtons.forEach((btn, i) => {
+          const isActive = i === index;
+          btn.setAttribute('aria-selected', String(isActive));
+          btn.tabIndex = isActive ? 0 : -1;
+          btn.classList.toggle('is-active', isActive);
+          const panel = tabPanels[i];
+          if (panel) {
+            if (isActive) {
+              panel.removeAttribute('hidden');
+            } else {
+              panel.setAttribute('hidden', '');
+            }
+          }
+        });
+      }
+
+      async function checkToken() {
+        const response = await fetch('/api/auth/retrieveToken', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if(response.ok) {
+            const data = await response.json();
+            if(data.token) {
+                isAuth = true;
+            }
+        }
+      }
+
+    async function login() {
+        const response = await fetch('/api/auth/login', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if(response.ok) {
+            const data = await response.json();
+            if(data.redirectUrl) window.location.href = data.redirectUrl;
+        }
+    }
+
+    function getValue(value, comma) {
+      return value ? `${value}${comma ? ',' : ''}` : '';
+    }
+      calculateTaxButton.addEventListener('click', function() {
+        const customerId = document.getElementById('sales-tax-customer').value;
+        const transactionDate = document.getElementById('sales-tax-transactionDate').value || new Date().toISOString().split('T')[0];
+        const fromAddressLine1 = document.getElementById('sales-tax-streetAddressLine1-from').value;
+        const fromAddressLine2 = document.getElementById('sales-tax-streetAddressLine2-from').value;
+        const fromAddressLine3 = document.getElementById('sales-tax-streetAddressLine3-from').value;
+        const frompostalCode = document.getElementById('sales-tax-postalCode-from').value;
+        const fromCity = document.getElementById('sales-tax-city-from').value;
+        const fromState = document.getElementById('sales-tax-state-from').value;
+        const fromCountry = document.getElementById('sales-tax-countryCode-from').value;
+        const toAddressLine1 = document.getElementById('sales-tax-streetAddressLine1-to').value;
+        const toAddressLine2 = document.getElementById('sales-tax-streetAddressLine2-to').value;
+        const toAddressLine3 = document.getElementById('sales-tax-streetAddressLine3-to').value;
+        const topostalCode = document.getElementById('sales-tax-postalCode-to').value;
+        const toCity = document.getElementById('sales-tax-city-to').value;
+        const toState = document.getElementById('sales-tax-state-to').value;
+        const toCountry = document.getElementById('sales-tax-countryCode-to').value;
+        const shippingFee = document.getElementById('sales-tax-shipping-fee').value;
+        const shippingFeeCurrency = document.getElementById('sales-tax-shipping-fee-currency').value;
+        const numberOfLines = document.getElementById('sales-tax-numberOfLines').value;
+        const pricePerUnit = document.getElementById('sales-tax-pricePerUnitExcludingTaxes').value;
+        const pricePerUnitCurrency = document.getElementById('sales-tax-pricePerUnitExcludingTaxes-currency').value;
+        const totalPrice = document.getElementById('sales-tax-totalPriceExcludingTaxes').value;
+        const totalPriceCurrency = document.getElementById('sales-tax-totalPriceExcludingTaxes-currency').value;
+        const productVariantId = document.getElementById('sales-tax-productVariant').value;
+
+
+        const shippingFromCheckBox = document.getElementById('sales-tax-shippingFromChkBx');
+        const shippingToCheckBox = document.getElementById('sales-tax-shippingToChkBx');
+
+        if(!customerId) {
+            alert('customer id is required.');
+            return;
+        }
+        const requestBody = {
+          customerId: customerId,
+          transactionDate: transactionDate
+        };
+
+        if(shippingFromCheckBox.checked) {
+          if(
+            (!fromAddressLine1 && !fromAddressLine2 && !fromAddressLine3) ||
+            !fromCity || !fromState
+          ) {
+            alert('shipping from address is not complete');
+            return;
+          }
+          requestBody.shippingFrom = `${getValue(fromAddressLine1)}${getValue(fromAddressLine2)}${getValue(fromAddressLine3)}, ${getValue(fromCity)}, ${getValue(fromState)} ${getValue(frompostalCode)}${fromCountry ? ',' + fromCountry : ''} `;
+        }
+
+        if(shippingToCheckBox.checked) {
+          if(
+            (!toAddressLine1 && !toAddressLine2 && !toAddressLine3) ||
+            !toCity || !toState
+          ) {
+            alert('shipping to address is not complete');
+            return;
+          }
+          requestBody.shippingTo = `${toAddressLine1} ${toAddressLine2} ${toAddressLine3}, ${toCity}, ${toState} ${topostalCode}, ${toCountry} `;
+        }
+
+
+        if(shippingFee && shippingFeeCurrency && 
+          (!isValidCurrencyPair(shippingFeeCurrency, shippingFee, 'shipping fee') ||
+           !isValidCurrencyCode(shippingFeeCurrency, 'shipping fee currency'))) {
+          return;
+        }
+        
+        if(shippingFee) {
+          requestBody.shippingFee = shippingFee;
+          requestBody.shippingFeeCurrency = shippingFeeCurrency;
+        }
+
+        if((pricePerUnit && pricePerUnitCurrency && 
+          (!isValidCurrencyPair(pricePerUnitCurrency, pricePerUnit, 'price per unit') ||
+           !isValidCurrencyCode(pricePerUnitCurrency, 'price per unit currency'))) ||
+          (totalPrice && totalPriceCurrency && 
+          (!isValidCurrencyPair(totalPriceCurrency, totalPrice, 'total price') ||
+           !isValidCurrencyCode(totalPriceCurrency, 'total price unit currency')))) {
+            return;
+           }
+
+        requestBody.numberOfLines = numberOfLines;
+        requestBody.pricePerUnitExcludingTaxes = pricePerUnit;
+        requestBody.pricePerUnitExcludingTaxesCurrency = pricePerUnitCurrency;
+        requestBody.totalPriceExcludingTaxes = totalPrice;
+        requestBody.totalPriceExcludingTaxesCurrency = totalPriceCurrency;
+        requestBody.productVariantId = productVariantId;
+
+        fetch(`/api/quickbook/salestax/indirect-tax`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify(requestBody)
+        })
+        .then(response => response.json())
+        .then(data => {
+          const taxResponse = data.indirectTaxCalculateSaleTransactionTax.taxCalculation;
+          const label = document.getElementById('display');
+          label.textContent = `transaction occured on ${taxResponse.transactionDate} for total tax of ${taxResponse?.taxTotals?.totalTaxAmountExcludingShipping?.value} with total shipping tax amount of ${taxResponse.shipping?.taxAmount.value} ${taxResponse.shipping?.taxAmount.currency}`;
+          const table = document.getElementById('table');
+            let tableHtml = `
+                <table>
+                    `;
+          if(taxResponse.lineItems.edges && taxResponse.lineItems.edges.length > 0) {
+                tableHtml = `${tableHtml}
+                    <thead>
+                        <tr>
+                            <th> Number of Units </th>
+                            <th> Price Per Unit </th>
+                            <th> Product </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    `;
+            }
+            const { edges, nodes } = taxResponse.lineItems;
+            for(let i = 0; i < edges.length; i++) {
+            // for(const node of projects) {
+              const edgeValue = edges[i];
+              const nodeValue = nodes[i];
+                const pricePerUnitValue = edgeValue?.node;
+                if(!pricePerUnitValue) {
+                    continue;
+                }
+                tableHtml = `${tableHtml}
+                    <tr> 
+                        <td> ${pricePerUnitValue.numberOfUnits} </td>
+                        <td> ${pricePerUnitValue.pricePerUnitExcludingTaxes.value} ${pricePerUnitValue.pricePerUnitExcludingTaxes.currency} </td>
+                        <td> ${nodeValue?.productVariantTaxability?.product?.id} </td>
+                    </tr>
+                `;
+            }
+            tableHtml = `${tableHtml}
+                </tbody>
+            </table>
+            `;
+            table.innerHTML = tableHtml;
+        })
+      });     
+      
+      const isValidCurrencyCode = (countryCode, field) => {
+        if(countryCode.length !== 3) {
+          alert(`invalid country code for ${field}`);
+          return false;
+        }
+        return true;
+      };
+
+      const isValidCurrencyPair = (countryCode, value, field) => {
+        if(value && !countryCode) {
+            alert(`must put in both ${field} and the currency`);
+            return false;
+        }
+        return true;
+      };
+
+      function showTabs() {
+        tabsSection.classList.remove('is-hidden');
+        heroSection.classList.add('is-hidden');
+        activateTab(0);
+        tabButtons[0].focus();
+    }
+
+    connectButton.addEventListener('click', login);
+
+    tabButtons.forEach((btn, index) => {
+        btn.addEventListener('click', () => activateTab(index));
+        btn.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            const next = (index + 1) % tabButtons.length;
+            activateTab(next);
+            tabButtons[next].focus();
+            } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const prev = (index - 1 + tabButtons.length) % tabButtons.length;
+            activateTab(prev);
+            tabButtons[prev].focus();
+            }
+        });
+    });
+
+    async function displayCustomers () {
+        fetch(`/api/quickbook/salestax/customers`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json' 
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+          const usefor = document.querySelectorAll('.use-for');
+          usefor.forEach((element) => element.removeAttribute('hidden'));
+          const customers = data.QueryResponse.Customer;
+          const table = document.getElementById('customers');
+            let tableHtml = `
+                <table id='customer-table'>
+                    `;
+          if(customers && customers.length > 0) {
+                tableHtml = `${tableHtml}
+                    <thead>
+                        <tr>
+                            <th> Customer ID </th>
+                            <th> Name </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    `;
+            }
+            
+            allCustomers = customers;
+            for(const customer of customers) {
+                if(!customer) {
+                    continue;
+                }
+                tableHtml = `${tableHtml}
+                    <tr> 
+                        <td> ${customer.Id} </td>
+                        <td> ${customer.DisplayName} </td>
+                    </tr>
+                `;
+            }
+            tableHtml = `${tableHtml}
+                </tbody>
+            </table>
+            `;
+            table.innerHTML = tableHtml;
+
+          document.getElementById('customer-table').addEventListener('click', function(e) {
+            const row = e.target.closest('tr');
+            if(row) {
+              const innerText = row.innerText.split('\t')[0]?.trim();
+              
+              let customer;
+              for(const cust of allCustomers) {
+                if(cust.Id === innerText) {
+                  customer = cust;
+                  break;
+                }
+              }
+              fillCustomer(customer);
+            }
+          })
+        });
+      }
+
+    function fillCustomer(customer) {
+      if(!customer) {
+        return;
+      }
+
+      const customerId = document.getElementById('sales-tax-customer');
+      const shippingFeeCurrency = document.getElementById('sales-tax-shipping-fee-currency');
+      const pricePerUnitCurrency = document.getElementById('sales-tax-pricePerUnitExcludingTaxes-currency');
+      const totalPriceCurrency = document.getElementById('sales-tax-totalPriceExcludingTaxes-currency');
+
+      const fromAddressLine1 = document.getElementById('sales-tax-streetAddressLine1-from');
+      const frompostalCode = document.getElementById('sales-tax-postalCode-from');
+      const fromCity = document.getElementById('sales-tax-city-from');
+      const fromState = document.getElementById('sales-tax-state-from');
+
+      const toAddressLine1 = document.getElementById('sales-tax-streetAddressLine1-to');
+      const topostalCode = document.getElementById('sales-tax-postalCode-to');
+      const toCity = document.getElementById('sales-tax-city-to');
+      const toState = document.getElementById('sales-tax-state-to');
+
+      const useForFromShipping = document.getElementById('for-from-shipping').checked;
+      const useForToShipping = document.getElementById('for-to-shipping').checked;
+
+      customerId.value = customer.Id;
+      const currency = customer.CurrencyRef?.value;
+      shippingFeeCurrency.value = currency;
+      pricePerUnitCurrency.value = currency;
+      totalPriceCurrency.value = currency;
+      const {Line1: shipline = '', City: shipcity = '', PostalCode: shippostalcode = '', CountrySubDivisionCode: shipstate = ''} = customer.ShipAddr || {};
+      const {Line1: billline = '', City: billcity = '', PostalCode: billpostalcode = '', CountrySubDivisionCode: billstate = ''} = customer.BillAddr || {};
+        
+      if(useForFromShipping) {
+        fromAddressLine1.value = shipline || billline;
+        frompostalCode.value = shippostalcode || billpostalcode;
+        fromCity.value = shipcity || billcity;
+        fromState.value = shipstate || billstate;
+      }
+      if(useForToShipping) {
+        toAddressLine1.value = shipline || billline;
+        topostalCode.value = shippostalcode || billpostalcode;
+        toCity.value = shipcity || billcity;
+        toState.value = shipstate || billstate;
+      }
+    }
+    })();
+  </script>
+</body>
+</html> 
