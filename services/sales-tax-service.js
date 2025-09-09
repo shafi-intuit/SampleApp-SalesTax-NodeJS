@@ -37,6 +37,7 @@ const makeRequest = async (client, queryData, variables) => {
         return response;
     } catch(error) {
         console.log('An Error Occured', error.response.errors || error.response);
+        return {error: error.response.errors || error.response};
     }
 }
 
