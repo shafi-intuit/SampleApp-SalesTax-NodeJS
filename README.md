@@ -36,6 +36,17 @@ The API requires the following OAuth scopes for full functionality:
 - **Sandbox**: `https://qb-sandbox.api.intuit.com/graphql`
 
 
+## Prerequisites
+
+- **Node.js**: Version 12.0.0 or higher (recommended: 14.x or 16.x)
+- **npm**: Comes with Node.js installation
+
+### Check Node.js Version
+```bash
+node --version
+npm --version
+```
+
 ## Getting Started
 
 1. **Install Dependencies**
@@ -483,21 +494,32 @@ The application uses:
 
 ### Common Issues
 
-1. **"Invalid URI or environment" Error**:
+1. **"Cannot find module 'node:events'" Error**:
+   - **Root Cause**: Using Express v5.x with Node.js < 18.0.0
+   - **Solution**: Upgrade to Node.js 18+ or use Express v4.x
+   - **Check Version**: Run `node --version` (should be 12.0.0+ for this project)
+   - **Fix**: Delete `node_modules` and `package-lock.json`, then run `npm install`
+
+2. **"Cannot find package 'graphql'" Error**:
+   - **Root Cause**: Missing `graphql` peer dependency for `graphql-request`
+   - **Solution**: Install the missing dependency
+   - **Fix**: Run `npm install graphql` or `npm install` (package.json updated with graphql dependency)
+
+3. **"Invalid URI or environment" Error**:
    - Ensure `DiscoveryDocument` is set to `https://appcenter.intuit.com/api/v1/connection/oauth2`
    - Verify `Environment` is set to `"sandbox"` or `"production"`
 
-2. **"Access Denied" GraphQL Error**:
+4. **"Access Denied" GraphQL Error**:
    - Verify both required scopes are present in `ProjectScopes`
    - Ensure QuickBooks company has sales tax enabled
    - Check that OAuth token includes `indirect-tax.tax-calculation.quickbooks` scope
 
-3. **"-37109" Application Error**:
+5. **"-37109" Application Error**:
    - Configure sales tax settings in QuickBooks company
    - Enable tax agencies and rates for the addresses being tested
    - Verify customer exists in QuickBooks (or use hardcoded customer ID "1")
 
-4. **"INV-GraphQL expression=Validation failed" Error**:
+6. **"INV-GraphQL expression=Validation failed" Error**:
    - **Root Cause**: Invalid `itemId` format
    - **Solution**: Use numeric string itemIds only (`"1"`, `"2"`, `"3"`, etc.)
    - **Avoid**: Custom alphanumeric itemIds (`"CUSTOM-123"`, `"PROD-456"`)

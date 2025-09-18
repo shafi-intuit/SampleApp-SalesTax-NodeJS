@@ -349,14 +349,16 @@
         .then(response => response.json())
         .then(data => {
            const label = document.getElementById('display');
+           const table = document.getElementById('table');
           if(data.error) {
             const  errorMsg = data.error[0].message.split('=').pop();
-            label.textContent=errorMsg
+            table.innerHTML = '';
+            label.textContent = errorMsg
             return 
           }
           const taxResponse = data.indirectTaxCalculateSaleTransactionTax.taxCalculation;
           label.textContent = `transaction occured on ${taxResponse.transactionDate} for total tax of ${taxResponse?.taxTotals?.totalTaxAmountExcludingShipping?.value} with total shipping tax amount of ${taxResponse.shipping?.taxAmount.value} ${taxResponse.shipping?.taxAmount.currency}`;
-          const table = document.getElementById('table');
+          
             let tableHtml = `
                 <table>
                     `;
